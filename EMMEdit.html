@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- main.css --><style>
+  html, body{
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    font-size: small;
+  }
+  
+  .navbar{background: rgb(0, 0, 0);}
+  
+  .row{
+    height: 97.7%;
+    margin-bottom: -3%;
+  
+  }
+  
+  #editor-side{
+    height: 100%;
+    padding: 0px !important;
+    border-right: 2px solid #333;
+    box-sizing: border-box;
+    background: black;
+  }
+  
+  #html-box, #css-box, #js-box, #result{
+    height: 33.33%;
+    box-sizing: border-box;
+    resize: both;
+    overflow: auto;
+  }
+  .box-heading{
+    padding: 3px 0 7px 12px;
+    background-color: #333;
+    color: white;
+    
+  }
+  #html-editor, #css-editor, #js-editor{
+    
+    width: 100%;
+    font-size: 14px;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 0.9em;
+  }
+  
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.7);
+  }
+  
+  ::-webkit-scrollbar-corner,
+  ::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(100, 100, 100, 0.4);
+  }
+  
+  #preview-box{
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+ 
+  }
+  
+  #preview-target{
+    height: 95.7%;
+    width: 100%;
+    border: none;
+    margin-bottom: -0.6%;
+  }
+  
+  
+  
+  
+  .box-heading>h1{
+
+  display:inline-block;
+  color: #555;
+  padding:0;
+margin:0;
+  float:right;
+  line-height: 1em;
+  user-select: none;
+  }
+  
+ label.btn{
+ margin-top:7px;
+ } 
+
+#stat{font-size:30px;}
+
+
+.editor{
+min-height:29vh;
+
+}
+
+
+.navbar{
+height:30px;
+
+}
+
+
+.navbar-brand{
+color:gray !important;
+}
+
+a.navbar-brand:hover{
+color: white !important;
+}
+  </style>
+  <!-- CSSO.css --><style>
+	section {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex: 1;
+  }
+  section + section {
+      border-left: 1px solid #26A;
+  }
+  section > .header {
+      display: flex;
+      align-items: center;
+      height: 42px;
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      padding: 10px;
+      background: #0381d3;
+      color: white;
+  }
+  section > .header > .caption {
+      font-size: 140%;
+      line-height: 1;
+      flex: 1;
+  }
+  section > .header label {
+      padding-left: 15px;
+      cursor: pointer;
+  }
+  section > .header input {
+      margin-top: 0;
+      vertical-align: middle;
+  }
+  section > .header button {
+      margin: 0;
+  }
+  section > .header button::-moz-focus-inner {
+      border: 0;
+  }
+  
+  .editor {
+      flex: 1;
+      padding: 10px;
+      outline: none;
+      border: none;
+      resize: none;
+      font-family: Consolas, Monaco, Courier New, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+  }
+  
+  #result {
+      position: relative;
+  }
+  #error {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, .98);
+      color: #D00;
+      transition: all .15s;
+      opacity: 0;
+      visibility: hidden;
+  }
+  #error.show
+  {
+      transition: all .35s;
+      opacity: 1;
+      visibility: visible;
+  }
+  #error .header
+  {
+      background: #E82020;
+  }
+  #errorMessage
+  {
+      padding: 10px;
+      font-size: 120%;
+      white-space: pre-wrap;
+      font-family: Consolas, Monaco, Courier New, monospace;
+  }
+  
+  #output {
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: Consolas, Monaco, Courier New, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+  }
+  #output .content {
+      padding: 10px;
+  }
+  
+  .change-log-toggle {
+      display: block;
+      font-size: 10px;
+      padding: 4px 10px;
+      background: #ABC;
+      text-align: center;
+      cursor: pointer;
+  }
+  
+  #tLog {
+      overflow: auto;
+      background: #F4F4FA;
+  }
+  #tLog .content {
+      padding: 10px;
+  }
+  #tLog H2 {
+      display: inline-block;
+      padding: 2px 5px 1px;
+      position: relative;
+      left: -5px;
+      color: #AAA;
+      background: rgba(255, 255, 255, .65);
+      margin: 0 0 .5em;
+      font-size: 14px;
+      font-weight: normal;
+  }
+  #tLog .delta + H2 {
+      margin-top: 1.25em;
+  }
+  #tLog .empty-delta {
+      color: #CCC;
+      font-size: 12px;
+  }
+  #tLog .delta {
+      font-family: Consolas, Monaco, Courier New, monospace;
+      line-height: 1.5;
+  }
+  #tLog .delta .added {
+      padding: 2px 0;
+      background: #595;
+      color: white;
+  }
+  #tLog .delta .removed {
+      padding: 2px 0;
+      background: #A66;
+      color: white;
+  }
+  #tLog .header:hover {
+      background: #9AB;
+  }
+  
+  #output,
+  #tLog {
+      flex: 1;
+      max-height: 100vh;
+      height: auto;
+      transition: .25s ease-in-out;
+      transition-property: padding, max-height, height, flex-grow;
+      box-sizing: border-box;
+  }
+  #result.show-transformations #output,
+  #result:not(.show-transformations) #tLog {
+      flex-grow: 0;
+      overflow: hidden;
+  }
+  
+  .stat-block {
+      padding: 5px 10px;
+      background: #D8E8F8;
+      display: flex;
+      align-items: flex-end;
+  }
+  .stat-block .powered {
+      flex: 1;
+      text-align: right;
+  }
+  .stat-block #stat {
+      white-space: pre-wrap;
+      font-family: Consolas, Monaco, Courier New, monospace;
+      font-size: 12px;
+      line-height: 1.4;
+  }
+  
+  </style>
+  <!-- tooltip.css --><style>
+              <style>
+              a.tooltip {
+                position: relative;
+                text-decoration: none;
+              }
+              a.tooltip:after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 130%;
+                left: 20%;
+                background: #ffcb66;
+                padding: 5px 15px;
+                color: black;
+                -webkit-border-radius: 10px;
+                -moz-border-radius : 10px;
+                border-radius : 10px;
+                white-space: nowrap;
+                opacity: 0;
+                -webkit-transition: all 0.4s ease;
+                -moz-transition : all 0.4s ease;
+                transition : all 0.4s ease;
+              }
+              a.tooltip:before {
+                content: "";
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-top: 20px solid #ffcb66;
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                -webkit-transition: all 0.4s ease;
+                -moz-transition : all 0.4s ease;
+                transition : all 0.4s ease;
+                opacity: 0;
+                left: 30%;
+                bottom: 90%;
+              }
+              a.tooltip:hover:after {
+                bottom: 100%;
+              }
+              a.tooltip:hover:before {
+                bottom: 70%;
+              }
+              a.tooltip:hover:after, a:hover:before {
+                opacity: 1;
+              }
+              </style>
+  </style>
+	<!-- checkbox.css --><style>
+	.checkbox {
+   --background: #207892;
+   --border: #207892;
+   --border-hover: #BBC1E1;
+   --border-active: #207892;
+   --tick: #fff;
+   position: relative;
+
+ }
+ .checkbox input,
+ .checkbox svg {
+   width: 14px;
+   height: 14px;
+   display: inline-block;
+ }
+ .checkbox input {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   position: relative;
+   outline: none;
+   background: var(--background);
+   border: none;
+   margin: 0;
+   padding: 0;
+   cursor: pointer;
+   border-radius: 4px;
+   transition: box-shadow 0.3s;
+   box-shadow: inset 0 0 0 var(--s, 1px) var(--b, var(--border));
+ }
+ .checkbox input:hover {
+   --s: 2px;
+   --b: var(--border-hover);
+ }
+ .checkbox input:checked {
+   --b: var(--border-active);
+ }
+ .checkbox svg {
+   pointer-events: none;
+   fill: none;
+   stroke-width: 2px;
+   stroke-linecap: round;
+   stroke-linejoin: round;
+   stroke: var(--stroke, var(--border-active));
+   position: absolute;
+   top: 0;
+   left: 7px;
+   width: 21px;
+   height: 21px;
+   transform: scale(var(--scale, 1)) translateZ(0);
+ }
+ .checkbox.path input:checked {
+   --s: 2px;
+   transition-delay: 0.4s;
+ }
+ .checkbox.path input:checked + svg {
+   --a: 16.1 86.12;
+   --o: 102.22;
+ }
+ .checkbox.path svg {
+   stroke-dasharray: var(--a, 86.12);
+   stroke-dashoffset: var(--o, 86.12);
+   transition: stroke-dasharray 0.6s, stroke-dashoffset 0.6s;
+ }
+ .checkbox.bounce {
+   --stroke: var(--tick);
+ }
+ .checkbox.bounce input:checked {
+   --s: 11px;
+ }
+ .checkbox.bounce input:checked + svg {
+   -webkit-animation: bounce 0.4s linear forwards 0.2s;
+           animation: bounce 0.4s linear forwards 0.2s;
+ }
+ .checkbox.bounce svg {
+   --scale: 0;
+ }
+ 
+ @-webkit-keyframes bounce {
+   50% {
+     transform: scale(1.2);
+   }
+   75% {
+     transform: scale(0.9);
+   }
+   100% {
+     transform: scale(1);
+   }
+ }
+ 
+ @keyframes bounce {
+   50% {
+     transform: scale(1.2);
+   }
+   75% {
+     transform: scale(0.9);
+   }
+   100% {
+     transform: scale(1);
+   }
+	</style>
+	
+  <link rel="stylesheet" href="lib/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script defer src="lib/fontawsome-5.0.9-all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+  
+      <script src="lib/csso.min.js"></script>
+      <script src="lib/cssbeautify.js"></script>
+      <script src="lib/base64.js"></script>
+      <script src="lib/diff.js"></script>
+  
+  <title>EMM(Edi)t</title>
+</head>
+<body>
+
+  <div class="row no-gutters">
+    <div class="col-lg-4 col-sm-12" id="editor-side">
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">EMM(Edi)t</a>
+        
+        <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#html-box" aria-controls="html-box" aria-expanded="false" aria-label="Toggle navigation"><i class="fab fa-html5 fa-1x"></i>&nbsp;HTML ⇗</button>
+        <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#result" aria-controls="css-box" aria-expanded="false" aria-label="Toggle navigation"><i class="fab fa-css3 fa-1x"></i>&nbsp;CSS ⇗</button>
+        <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#js-box" aria-controls="js-box" aria-expanded="false" aria-label="Toggle navigation"><i class="fab fa-js fa-1x"></i>&nbsp;JS ⇗</button>
+                 
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <button id="blob" type="button" class="btn btn-outline-info" onclick="download_zip()" ><i class="fas fa-download fa-1x" ></i>&nbsp;Export</button>
+              <button class="btn btn-outline-danger m-2 my-sm-0" onclick="reset_editor()">Clear all&nbsp;<i class="fas fa-trash fa-1x"></i></button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div id="html-box">
+        <div class="box-heading"><h1>HTML<i class="fab fa-html5 fa-1x"></i></h1>
+          <button type="button" id="html_clr" onclick="clear_html()" style="color:red" class="btn btn-link btn-sm"><i class="fas fa-trash fa-1x" style="color:red"></i></button>
+        </div>
+        
+        <div class="editor" id="html-editor"></div>
+      </div>
+      <div id="result" class="btn-outline-info">
+        <div class="box-heading"><h1>CSS <i class="fab fa-css3 fa-1x"></i></h1>
+          <button type="button" id="css_clr" onclick="clear_css()" style="color:red" class="btn btn-link btn-sm"><i class="fas fa-trash fa-1x" style="color:red"></i></button>
+          
+          <button id="beautifySource" class="btn btn-outline-info">Beautify</button>
+   				
+          <label for="sourceMap" class="btn btn-outline-info mnuExp_Hide checkbox bounce" ><input type="checkbox" id="sourceMap" class="btn-check" autocomplete="off"><svg viewBox="0 0 21 21"><polyline points="5 10.75 8.5 14.25 16 6"></polyline></svg> Source map</label>
+          <label for="restructure" class="btn btn-outline-info mnuExp_Hide checkbox bounce"><input type="checkbox" id="restructure" autocomplete="off" ><svg viewBox="0 0 21 21"><polyline points="5 10.75 8.5 14.25 16 6"></polyline></svg> Restructure</label>
+          <label for="beautify" class="btn btn-outline-info mnuExp_Hide checkbox bounce"><input type="checkbox" id="beautify" autocomplete="off"><svg viewBox="0 0 21 21"><polyline points="5 10.75 8.5 14.25 16 6"></polyline></svg> Re-Beautify</label>
+          <button type="button" id="transformations-log" class="btn btn-outline-info"><a href="#myModal" role="button" class="far fa-comments" data-toggle="modal"> </a></button>
+         	<button type="button" id="stat" class="btn btn-link btn-sm"><i class="fas fa-info-circle" style="color:#17a2b8;"></i></button>
+         	
+         	
+         	
+         	
+
+
+         	
+         	
+         	
+         	
+         	
+         	
+         	
+					<div class="editor" id="CSSeditor"></div>
+
+        </div>
+       
+      </div> 
+      <div id="js-box">
+        <div class="box-heading"><h1>JS <i class="fab fa-js fa-1x"></i></h1>
+          <button type="button" id="js_clr" onclick="clear_js()" style="color:red" class="btn btn-link btn-sm"><i class="fas fa-trash fa-1x" style="color:red"></i></button>
+        </div>
+        <div class="editor" id="js-editor"></div>
+      </div>
+    </div>
+    <div class="col-lg-8 col-sm-12" id="preview-box">
+      <iframe class="preview" id="preview-target">
+        <body bg-color=black;>
+          
+        </body>
+      </iframe>   
+    </div>
+  </div>
+
+
+  <!-- bootstrap.modal.css --><style>
+  .modal-content{color:black;padding:10px 20px;width:200%;}
+  .modal-content h2{color:black; font-size:x-larger; font-style: italic;  }
+  </style>
+  <div id="myModal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header"><h5 class="modal-title"><i class="far fa-comments"></i>&nbspTransformations</h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>                    
+              <div id="tLog"></div>
+          </div>
+      </div>
+  </div>
+ 	<div id="compressCodeModal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header"><h5 class="modal-title"><i class="fas fa-code"></i>&nbsp; Code</h5><button type="button" class="close" data-dismiss="modal">&times;</button></div>                    
+              <div id="output"><div class="content"></div></div>
+          </div>
+      </div>
+  </div>
+
+
+  <script src="lib/jquery-3.3.1.min.js"></script>
+  <script src="lib/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="lib/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="lib/ace/ace.js"></script>
+  <script src="lib/ace/ext-emmet.js"></script>
+  <script src="lib/emmet.js"></script>
+ 
+  <script src="lib/FileSaver.js"></script>
+  <script src="lib/jszip.min.js"></script>
+  <script>
+    var htmlEditor = ace.edit("html-editor");
+    htmlEditor.session.setMode("ace/mode/html");
+    htmlEditor.setTheme("ace/theme/tomorrow_night");
+    htmlEditor.setOption("enableEmmet", true);
+    htmlEditor.setFontSize(15);
+    htmlEditor.session.setTabSize(2);
+  </script>
+  <script>
+    var cssEditor = ace.edit("CSSeditor");
+    cssEditor.session.setMode("ace/mode/css");
+    cssEditor.setTheme("ace/theme/tomorrow_night");
+    cssEditor.setFontSize(15);
+    cssEditor.session.setTabSize(2);
+  </script>
+  <script>
+    var jsEditor = ace.edit("js-editor");
+    jsEditor.session.setMode("ace/mode/javascript");
+    jsEditor.setTheme("ace/theme/tomorrow_night");
+    jsEditor.setFontSize(15);
+    jsEditor.session.setTabSize(2);
+  </script>
+  <script>
+			$(document).ready(function() {
+			  $('.editor').on('keyup', function() {
+			    var iframeContent = '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t<meta charset="UTF-8">\n\t<meta name="viewport" content="width=device-width, initial-scale=1.0">\n\t<meta http-equiv="X-UA-Compatible" content="ie=edge">' +
+			      '\n\t\t<style>' + '\n\t\t\t' + cssEditor.getValue() + '\n\t\t</style>' + '\n\t</head>\n\t<body>' + '\n\t' + htmlEditor.getValue() + '\n\t<script>' + '\n\t\t\t' + jsEditor.getValue() + '\n\t<\/script>\n\t</body>\n</html>';
+			    var target = $('#preview-target')[0].contentWindow.document;
+			    target.open();
+			    target.write(iframeContent);
+			    target.close();
+			  });
+			});
+  </script>
+  
+  <script>
+    var download_zip=function(){
+      var zip = new JSZip();
+      var html_doc='<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t<meta charset="UTF-8">\n\t<meta name="viewport" content="width=device-width, initial-scale=1.0">\n\t<meta http-equiv="X-UA-Compatible" content="ie=edge">\n\t\t<link rel="stylesheet" href="style.css">\n\t</head>\n\t<body>\n\t'+htmlEditor.getValue()+'\n\t<script src="script.js">\n\t<\/script>\n\t</body>\n</html>';
+      zip.file("index.html",html_doc);
+      zip.file("style.css",cssEditor.getValue());
+      zip.file("script.js",jsEditor.getValue());
+      jQuery("#blob").on("click", function () {
+      zip.generateAsync({type:"blob"}).then(function (blob) {
+          saveAs(blob, "web.zip");
+          }, function (err) {
+              jQuery("#blob").text(err);
+              });
+      });
+    }
+    var reset_editor=function(){
+      htmlEditor.setValue("");
+      cssEditor.setValue("");
+      jsEditor.setValue("");
+      document.getElementById("preview-target").src = "about:blank";
+      console.clear();
+    }
+    var clear_html=function(){
+      htmlEditor.setValue("");
+    }
+    var clear_css=function(){
+      cssEditor.setValue("");
+    }
+    var clear_js=function(){
+      jsEditor.setValue("");
+    }
+  </script>
+
+  
+  <!-- CSSO ----------------------------------------------------------------------------------->
+
+ 
+						
+
+    
+<script>
+    var lastSource;
+    var lastResult;
+    var lastResultMap;
+
+    function beautifySourceCSS() {
+        //   source.value = cssbeautify(source.value);
+        cssEditor.setValue(cssbeautify(cssEditor.getValue()));
+    }
+
+    function processParseError(cssEditor, details, message) {
+        function formatLines(start, end) {
+            return lines.slice(start, end).map(function(line, idx) {
+                var num = String(start + idx + 1);
+
+                while (num.length < maxNumLength) {
+                    num = ' ' + num;
+                }
+                return num + ' |' + line;
+            }).join('\n');
+        }
+
+        var lines = cssEditor.getValue().split(/\n|\r\n?|\f/);
+        var column = details.column;
+        var line = details.line;
+        var startLine = Math.max(1, line - 3);
+        var endLine = Math.min(line + 3, lines.length + 1);
+        var maxNumLength = Math.max(4, String(endLine).length) + 1;
+
+        return [
+            'CSS parse error: ' + message + '\n',
+            formatLines(startLine - 1, line),
+            new Array(column + maxNumLength + 2).join('-') + '^',
+            formatLines(line, endLine)
+        ].join('\n');
+    }
+
+    function updateStat(originalSize, resultSize, time) {
+        function percent(value) {
+            return value ? ' (' + (100 * value).toFixed(2) + '%)' : '';
+        }
+
+        var delta = originalSize - resultSize;
+
+        stat.setAttribute("data-toggle", "tooltip");
+        stat.setAttribute("title", 
+        /* stat.innerHTML = */
+        		'Original:   ' + originalSize + ' bytes\n' +
+            'Compressed: ' + resultSize + ' bytes' + percent(resultSize / originalSize) + '\n' +
+            'Saving:     ' + delta + ' bytes' + percent(delta / originalSize) + '\n' +
+            'Time:       ' + time + ' ms'
+        );
+    }
+
+
+
+    function setOutput() {
+        var css = lastResult;
+
+        if (sourceMap.checked && lastResultMap) {
+            css += '\n/*# sourceMappingURL=application/json;base64,' + Base64.encode(lastResultMap) + ' */';
+        } else if (beautify.checked) {
+            css = cssbeautify(css);
+        }
+
+
+        //document.querySelector('#output .content').textContent = css;
+        cssEditor.setValue(css);
+    }
+
+    function outputChanges(steps) {
+        var lastStep = '';
+        var transformations = '';
+
+        
+            steps.forEach(function(item) {
+                if (item.css !== lastStep && lastStep) {
+                    // transformations += '<span class="delta empty-delta">(no transformations)</span><br/>';
+                    transformations += '<h2>' + item.name + '</h2>';
+                    transformations +=
+                        '<div class="delta">' +
+                        JsDiff.diffCss(lastStep, item.css).map(function(chunk) {
+                            if (chunk.removed) {
+                                return '<span class="removed">' + chunk.value + '</span>';
+                            } else if (chunk.added) {
+                                return '<span class="added">' + chunk.value + '</span>';
+                            } else {
+                                return chunk.value;
+                            }
+                        }).join('') +
+                        '</div>';
+                }
+
+                lastStep = item.css;
+            });
+        
+        
+        
+        
+
+    document.querySelector('#tLog').innerHTML =
+		    transformations +
+		    '<h2>result</h2><div class="delta">' + 
+		    lastStep 
+		    '</div>' ;
+    }
+
+
+
+
+
+    function process(force) {
+        var time;
+
+        if (force !== true && cssEditor.getValue() === lastSource) {
+            return;
+        }
+
+        beautify.disabled = sourceMap.checked;
+
+        var time = (window.performance || Date).now();
+        var steps = [];
+
+        try {
+            lastSource = cssEditor.getValue();
+            lastResult = csso.minify(cssEditor.getValue(), {
+                restructure: restructure.checked,
+                sourceMap: sourceMap.checked,
+                logger: function(name, ast) {
+                    if (ast) {
+                        steps.push({
+                            name: name,
+                            css: csso.syntax.generate(ast)
+                        });
+                    }
+                }
+            });
+
+            lastResultMap = lastResult.map ? lastResult.map.toString() : null;
+            lastResult = lastResult.css;
+
+            
+        } catch(e) {
+            errorMessage.textContent = e.parseError
+                ? processParseError(cssEditor.getValue(), e.parseError, e.message)
+                : e.message;
+            
+            return;
+        }
+
+        updateStat(
+            lastSource.length,
+            lastResult.length,
+            Math.round((window.performance || Date).now() - time)
+        );
+
+        setOutput();
+        outputChanges(steps);
+    }
+    
+
+    beautifySource.addEventListener('click', beautifySourceCSS, false);
+    beautify.addEventListener('change', setOutput, false);
+    restructure.addEventListener('change', process.bind(null, true), false);
+    sourceMap.addEventListener('change', process.bind(null, true), false);
+    
+
+    
+    process(true);
+</script>
+        
+</body>
+</html>
+  
+  
+  
